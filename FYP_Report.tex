@@ -497,7 +497,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         \label{fig:MUSICBlockPt2}
     \end{figure}
     
-    When applying the MUSIC algorithm to a wideband signal instead of a single frequency there could be multiple. This increases the computational load required as it could be required to iterate through hundreds of frequencies. To reduce the computational requirements the size of the frequency bins of the Fourier transform for each snapshot are calculated using the following equation where $N_s$ is the number of samples in the full signal.
+    When applying the MUSIC algorithm to a wideband signal instead of a single frequency there will most likely be multiple frequencies all belonging to the same spectrum bin, if the algorithm was to iterated through every single frequency and solve this would increase the computational effort required dramatically as it could be required to iterate through hundreds of unnecessary frequencies. To reduce the computational requirements the size of the frequency bins of the Fourier transform for each snapshot are calculated using the following equation where $N_s$ is the number of samples in the full signal. \hl{check}
     
     \begin{equation}
         f_{bin} =\frac{f_s \cdot K}{N_s}
@@ -505,7 +505,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
     
     Once the size of the frequency bins are established the wideband frequency range is then divided by the bin size to determine how many iterations/FFTs are required as then rather than iterating through each individual required frequency, iterations are done by frequency bin which reduces computational requirements potentially by hundreds of times. 
     
-    For each frequency bin the full narrowband compute as described above is calculated and the resulting power for each frequency at each point is averaged to calculate the estimated direction of arrival of the $M$ wideband signals. 
+    For each frequency bin the full narrowband compute as described above is calculated and the resulting power for each frequency at each point is averaged to calculate the estimated direction of arrival of the $M$ wideband signals. Another implementation of the MUSIC algorithm is using a select number of pre-determined frequencies to perform the average over for rather than a range, this is particularly useful when locating machine defects as covered in greater detail in Section \ref{sec:Machine Defects}, as well as being a more accurate way to locate defects it is much more computationally efficient than calculating the power array for all of the frequency bins in a range. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulation Package} \label{sec:Software Sim}
     % This simulation program is verified to be accurate by comparison of the 3D frequency response heat-map produced in Section \ref{sec:2D Freq Response} and results found from testing.
@@ -998,7 +998,7 @@ Knowing these common occurring defects of machinery that can be identified throu
         \label{fig:zoom mic signals lab test}
     \end{figure}
     
-    In the following Figure \ref{fig:defect detection lab test results} we can see that the array succeeded in differentiating the signal source locations and identified the correct locations for the signals. In Figure \ref{fig:defect detection lab test results} (a) a single frequency of 2474Hz was searched for using the MUSIC algorithm for Figure \ref{fig:defect detection lab test results} (b) a set of frequencies was used to search for, these being: 4812Hz, 4870Hz, 4921Hz, 6080Hz, and 6090Hz
+    In the following Figure \ref{fig:defect detection lab test results} it is shown that the array succeeded in differentiating the signal source locations and identified the correct locations for the signals. In Figure \ref{fig:defect detection lab test results}(a) a single frequency of 2474Hz was searched for using the MUSIC algorithm and for Figure \ref{fig:defect detection lab test results}(b) a set of frequencies was used to search for, these being: 4812Hz, 4870Hz, 4921Hz, 6080Hz, and 6090Hz. As can shown this method of differentiating signals by selecting certain frequencies worked well, the 2.5kHz signal was located  accurately though the estimated area is relatively large, on the other-hand the turbine balance test rig was estimated very precisely and accurately though there is a large level of side-lobes creating some uncertainty within the results.
     
     \begin{figure} [H]
         \centering
@@ -1018,6 +1018,7 @@ Knowing these common occurring defects of machinery that can be identified throu
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion} \label{sec:Conclusion}
+    \hl{more industrial testing, fpga, more microphones etc would be better}
     The main goal of this project is to design an acoustic array that is to be used for the early detection of defects in machinery. This goal is looking promising and achievable, with the current delay-and-sum algorithm implemented already, by just increasing the number of sensors and improving the geometry of the array there will be noticeable improvements to the beamforming accuracy and resolution and with some fine-tuning it should be use-able on machinery. This combined with an FPGA or new algorithms will decrease computational load and potentially lead to better results as new algorithms will lead to further refinement.  
     
     In conclusion the current progress towards an acoustic array for condition monitoring is promising. With the next portion of work being devoted to refinement and expansion of ideas, and further signal analysis techniques.
