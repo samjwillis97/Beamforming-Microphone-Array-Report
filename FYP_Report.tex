@@ -979,13 +979,35 @@ Knowing these common occurring defects of machinery that can be identified throu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Defect Detection} \label{sec:Defect Detection Lab Testing}
 
-Now to verify the ability of the array to differentiate different noise and spatially locate them a simple test was performed in a lab environment. To the right hand side 3m from the array a speaker was playing a loud 2kHz tone and in front of the array to the left 8m away was a turbine balance test rig running at 3000rpm, the test was to see if it would be possible to differentiate the sources.
+    Now to verify the ability of the array to differentiate different noise and spatially locate them a simple test was performed in a lab environment. To the right hand side 3m from the array a speaker was playing a loud 2.5kHz sinusoidal tone and in front of the array to the left 8m away was a turbine balance test rig running at 3000rpm, the purpose of the test was to see if it would be possible to differentiate the sources.
+
+    Figure \ref{fig:mic signals lab test} shows the signals captured by the microphone array over a 4 second period. As can be seen in the frequency spectrum, there is a significant amount of noise in the sub 1kHz frequency range, a large spike at 2.5kHz, a small bunch of signals at 5kHz and 6kHz and more noise around 9-11kHz. As the lab was relatively quiet the peaks that appeared at 5kHz and 6kHz were assumed to be coming from the balancing test rig, Figure \ref{fig:zoom mic signals lab test} provides a closer look at some of the assumed signals from the balancing test rig.
+    
     
     \begin{figure} [H]
         \centering
-        \includegraphics[keepaspectratio, width = 0.6\textwidth]{Figures/Raw Sound Waves.png}
+        \includegraphics[keepaspectratio, width = \textwidth]{Figures/Raw Sound Waves.png}
         \caption{Microphone Signals}
         \label{fig:mic signals lab test}
+    \end{figure}
+    
+    \begin{figure} [H]
+        \centering
+        \includegraphics[keepaspectratio, width = \textwidth]{Figures/Zoomed Sound Waves.png}
+        \caption{Zoomed Microphone Signals}
+        \label{fig:zoom mic signals lab test}
+    \end{figure}
+    
+    In the following Figure \ref{fig:defect detection lab test results} we can see that the array succeeded in differentiating the signal source locations and identified the correct locations for the signals. In Figure \ref{fig:defect detection lab test results} (a) a single frequency of 2474Hz was searched for using the MUSIC algorithm for Figure \ref{fig:defect detection lab test results} (b) a set of frequencies was used to search for, these being: 4812Hz, 4870Hz, 4921Hz, 6080Hz, and 6090Hz
+    
+    \begin{figure} [H]
+        \centering
+        \begin{tabular}{cc}
+            \subfloat[2.5kHz Signal Location]{\includegraphics[keepaspectratio, width = 0.45\textwidth]{Figures/2474Hz.png}} &
+            \subfloat[Turbine Balance Test Rig Location]{\includegraphics[keepaspectratio, width = 0.45\textwidth]{Figures/BalancingRig.png}}
+        \end{tabular}
+        \caption{Differentiate signal testing results}
+        \label{fig:defect detection lab test results}
     \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
