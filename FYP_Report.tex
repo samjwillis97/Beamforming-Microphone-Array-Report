@@ -352,8 +352,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
     
     A problem arises using Equation \ref{eq:TDOAfs} when the calculated delay for a particular channel is not an integer, due to the digital sampling the smallest delay is the sample length as it is not possible to delay by sub-sample time steps. When using a lower sampling rate this problem can cause large inaccuracies, the easiest way to prevent this is to use the highest possible sample rate to minimise the error, otherwise, the incoming signal can be up-sampled by a preset factor using a Linear Up-sampler or Finite Impulse Response Filter, this up-sampling factor is taken into account with the delay by multiplying the original sampling rate by this same factor. 
     
-    \hl{maybe explain for loop etc. more}
-    The process in LabVIEW for applying the delay to each signal was to find the largest and the smallest delay required for that particular point, for each channel the absolute of the smallest delay at that point plus the individual channel delay worth of zeroes are added to the beginning of the signal. Following this, the absolute value of the largest delay of samples are removed from this signal to ensure there are no zeroes left in the signal to keep integrity. The block diagram for this process is shown in Figure \ref{fig:DelayLabVIEW}, the two rectangular structures are For Loops in LabVIEW, the outer iterates through the 
+    The process in LabVIEW for applying the delay to each signal was to find the largest and the smallest delay required for that particular point, for each channel the absolute of the smallest delay at that point plus the individual channel delay worth of zeroes are added to the beginning of the signal. Following this, the absolute value of the largest delay of samples are removed from this signal to ensure there are no zeroes left in the signal to keep integrity. The block diagram for this process is shown in Figure \ref{fig:DelayLabVIEW}, the two rectangular structures are For Loops in LabVIEW, the outer iterates through a larger 2D array of delays and returns a 1D array of delays for a particular azimuth and elevation, the inner loop iterates through each channel applying the correct delay.
     
     \begin{figure} [H]
         \centering
@@ -374,10 +373,11 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
     
     Equation \ref{eq:power} determines the power at a single point by summing all the channels at that point resulting in a single signal wave that has been either constructively and destructively interfered then divided by the number of channels normalising the resulting wave, an example of this can be seen in Appendix \ref{app:Sim}. Now the single interfered wave is squared element-by-element, this process makes all values positive but also attenuates the peaks of the signal compared to the troughs. Finally each amplitude value for every sample of the wave is summed resulting in a single value for that point. This process makes sure positions with larger amounts of constructively interfered signals that are closer to the signal location are attenuated and return a higher value allowing for a heat-map to be created with the estimated signal source location.
     
-    \hl{using this method to extract sinals from locations as well}
+    Extracting the signals from a particular spatial location uses the delay-and-sum beamforming algorithm for a single point rather than iterating through a set of spatial locations. For the point of interest the channels are delayed accordingly, summed and then normalised as described above to return a single waveform for the location of interest.
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{MUSIC Algorithm} \label{sec:Software MUSIC}
-    \hl{say this section is adapted from direction of arrival estimation and another one} When approximating the direction of arrival of signals using the multiple signal classification algorithm the anticipated data for the $M$ arriving signals are modeled as below in Eqn. \ref{eq:MUSIC signal}. 
+    This section has been adapted from Direction of Arrival Estimation \citep{Adv13} and DOA Estimation based on MUSIC algorithm \citep{Tan14}. When approximating the direction of arrival of signals using the multiple signal classification algorithm the anticipated data for the $M$ arriving signals are modeled as below in Eqn. \ref{eq:MUSIC signal}. 
     \begin{equation}
         \mathbf{x}=\mathbf{S\alpha} + \mathbf{n}
         \label{eq:MUSIC signal}
@@ -406,7 +406,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         s(\theta,\phi)=e^{-j2\pi \tau(\theta,\phi) f}
     \end{equation}
     
-    An assumption is made that the impinging signals are uncorrelated, and therefore the estimated correlation of matrix of $\mathbf{x}$ is as shown below, where $E[]$ means the expected value and $H$ is the notation used to indicate a hermitian or conjugate transpose.
+    An assumption is made that the impinging signals are uncorrelated, and therefore the estimated correlation of matrix of $\mathbf{x}$ is as shown below, where $E[\;]$ means the expected value and $H$ is the notation used to indicate a hermitian or conjugate transpose.
     
     \begin{equation}
     \begin{split}
@@ -440,9 +440,9 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
     \end{split}
     \end{equation}
 
-    This implies that the noise eigenvectors are orthogonal to the $M$ steering vectors and is the basis of the MUSIC algorithm. Where orthogonal vectors are those whose dot product equals $0$, if plotted in 2D these would be perpendicular. \hl{ref wolfram mathworld}
+    This implies that the noise eigenvectors are orthogonal to the $M$ steering vectors and is the basis of the MUSIC algorithm. Where orthogonal vectors are those whose dot product equals $0$, if plotted in 2D these would be perpendicular \citep{Wei}.
     
-    Once the noise subspace matrix $\mathbf{Q}_n$ has been determined the MUSIC pseudo spectrum of power can be calculated as a function of $\theta$ and $\phi$ as shown in Eqn.
+    Once the noise subspace matrix $\mathbf{Q}_n$ has been determined the MUSIC pseudo spectrum of power can be calculated as a function of $\theta$ and $\phi$ as shown in Eqn. \ref{eq:MUSIC Power}.
     
     \begin{equation}
         P_{MUSIC}(\theta,\phi) = \frac{1}{\mathbf{s}^H(\theta,\phi)\mathbf{Q}_n\mathbf{Q_n}^H\mathbf{s}(\theta,\phi)} = \frac{1}{||\mathbf{Q}_n^H\mathbf{s}(\theta,\phi)||^2}
@@ -451,7 +451,6 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{LabVIEW Implementation} \label{sec:MUSIC LabVIEW}
-    \hl{how narrowband works, and how it was adapted to wideband, how the calculation of delays for it worked, reducing computational resources for wideband, add pictures, add heatmap results}
     When implementing the MUSIC algorithm in LabVIEW I started with the narrowband MUSIC approach where it is assumed the signal only contains a single frequency $f$ the same as is outlined in Section \ref{sec:Software MUSIC}.
     
     Firstly the complex phase delays for each microphone in the array was generated for every combination of elevation and azimuth. These were calculated using equations \ref{eq:AzEl TDOA} and \ref{eq:Complex Phase Delay}.
@@ -468,7 +467,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         For \; n = 1,2,...,N
     \end{equation*}
     
-    Next the correlation matrix is calculated for $\mathbf{x}$, the true value is not known and must be estimated, the estimation is made using the received data from the microphone array, this is performed by averaging the result over several snapshots of data as can be seen in Eqn. \ref{eq:covariance average} the rule of thumb is that $K > 2N$ for the number of averages required  \hl{ref (DOA Est.pdf)}. 
+    Next the correlation matrix is calculated for $\mathbf{x}$, the true value is not known and must be estimated, the estimation is made using the received data from the microphone array, this is performed by averaging the result over several snapshots of data as can be seen in Eqn. \ref{eq:covariance average} the rule of thumb is that $K > 2N$ for the number of averages required \citep{Adv13}. 
     
     \begin{equation}
         \mathbf{R} = \frac{1}{K}\sum_{k=0}^K\mathbf{x}_k\mathbf{x}_k^H
@@ -554,8 +553,6 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Spatial Signal Generator} \label{sec:Signal Generator}
-    \hl{usefuleness of testing sampling rate etc.}
-    
     Using the generated microphone array geometry and the generated array of microphone delays from Section \ref{sec:Array Generator} and \ref{sec:Delay Calculations} respectively equivalent spatial signals can be recreated for the purpose of simulating and testing microphone array performance. Figure \ref{fig:SignalGenBlock} shows the block diagram of the LabVIEW VI that performs the signal generation. This VI can recreate up to two separate spatial signals, with added white noise and has a choice of equivalent sampling rate and the number of samples capture. This allows for a more accurate representation of array performance and especially for the ratio of processing time to signal length and the effects of the signal length on algorithm and array performance. 
     
     \begin{figure}[H]
@@ -667,7 +664,7 @@ Figure \ref{fig:FilePlaybackPanel} shows the user interface for playing back fil
         \label{fig:2DResponseSteered}
     \end{figure}
     
-    When analysing a 2D Frequency response the main points of interest are the main-lobe, its beam-width and the side lobes. The main-lobe is the lobe with the greatest amplitude seen at 90$^{\circ}$ in Figure \ref{fig:2DFreqResponseLin} the beam-width is the width from where the main-lobe drops to -20dB as this is half the power of 0dB, this is effectively the resolution of the array at that frequency. Side lobes are important to show the effective gain of interference that appear to be coming from angles other than the angle of interest due to spatial aliasing, these can be seen in Figure \ref{fig:2DFreqResponseLin} and \ref{fig:2DResponseSteered} by the 7 or 8 lobes with peaks around -20dB gain. The goal of microphone array geometry design is to minimise the side lobes minimizing interference, and decreasing the beam width to give a better array resolution.
+    When evaluating a 2D Frequency response the main points of interest are the main-lobe, its beam-width and the side lobes. The main-lobe is the lobe with the greatest amplitude seen at 90$^{\circ}$ in Figure \ref{fig:2DFreqResponseLin} the beam-width is the width from where the main-lobe drops to -20dB as this is half the power of 0dB, this is effectively the resolution of the array at that frequency. Side lobes are important to show the effective gain of interference that appear to be coming from angles other than the angle of interest due to spatial aliasing, these can be seen in Figure \ref{fig:2DFreqResponseLin} and \ref{fig:2DResponseSteered} by the 7 or 8 lobes with peaks around -20dB gain. The goal of microphone array geometry design is to minimise the side lobes minimizing interference, and decreasing the beam width to give a better array resolution.
     
     Equation \ref{eq:2D Response} was adapted from \citet{Ben08} and has been applied to calculate 2D Frequency responses in Figures \ref{fig:2DFreqResponseLin} and \ref{fig:2DResponseSteered}.
     
@@ -735,7 +732,7 @@ Figure \ref{fig:FilePlaybackPanel} shows the user interface for playing back fil
 
     The main constraints with the design of microphone array is the number of handle-able synchronised high sample-rate analog inputs.
     
-    A comparison of various array geometries was performed by Zebb Prime and Con Doolan of The University of Adelaide, this included various spiral array geometries that were evaluated by comparing their minimum side lobe levels and beam widths. A comparison of all the arrays for both near-field and far-field was presented but as the purpose of the array in this report is for far-field signals the near field results were not taken into account. The comparison showed the the Underbrink geometry design was overall the best performing closely followed by the Brüel \& Kjær (B\&K) array \hl{ref}. Hence for the choice of array for the proof of concept design the Underbrink array was chosen as it shows promising resolution and minimal side lobes especially for the number of sensors being used.
+    A comparison of various array geometries was performed by Zebb Prime and Con Doolan of The University of Adelaide, this included various spiral array geometries that were evaluated by comparing their minimum side lobe levels and beam widths. A comparison of all the arrays for both near-field and far-field was presented but as the purpose of the array in this report is for far-field signals the near field results were not taken into account. The comparison showed the the Underbrink geometry design was overall the best performing closely followed by the Brüel \& Kjær (B\&K) array \citep{Pri13}. Hence for the choice of array for the proof of concept design the Underbrink array was chosen as it shows promising resolution and minimal side lobes especially for the number of sensors being used.
     
     The Underbrink array is shown in Figure \ref{fig:Mic Arrays}, it is a "multi-spiral design where the microphones are placed in the centre of equal area segments" \citep{Pri13}. Where a minimum and maximum radius ($r_0$ and $r_{max}$ respectively) must be defined as well as the number of spiral arms ($N_a$) and microphones per spiral ($N_m$). This array is based upon the following set of equations.
     
@@ -910,16 +907,30 @@ Figure \ref{fig:FilePlaybackPanel} shows the user interface for playing back fil
     \end{figure}
 
 \subsubsection{Second Array} \label{sec:Second Design DAQ}
-    \hl{what was intended vs what was used, picture}
-    The second array was designed to be used with two NI cRIO-9036's Real Time Targets with FPGA's and 16 NI-9232 C-series Modules. This configuration would have allowed for up to 48 Channels of synchronised 102.4kHz input signals being processed on the cRIO's themselves. Due to unforeseen circumstances this hardware was made inaccessible and unavailable \hl{changed to what, something about 24 channels}. Hence the microphone array used for testing only consisted of 24 microphones with input speeds of 50kHz with all processing taking place on an attached computer. As the array was designed for the use of 45 microphones spanning over 5 arms it had to be cut down, the inner 20 were microphones were chosen and then 4 of the 5 on the next ring of microphones as shown in Figure \hl[fill this]. 
+    The second array was designed to be used with two NI cRIO-9036's Real Time Targets with FPGA's and 16 NI-9232 C-series Modules. This configuration would have allowed for up to 48 Channels of synchronised 102.4kHz input signals being processed on the cRIO's themselves with potential to move some processing to the FPGA. Due to unforeseen circumstances this hardware was made inaccessible and unavailable and a change of hardware was required. The hardware was changed back to the NI cDAQ-9178 and 8 NI-9229's C Series Modules, this allows for up to 24 synchronous channels of 50kHz sample rate \citep{NI9229}. Hence the final microphone array only consisted of 24 microphones with all processing taking place on an attached computer. As the array was designed for the use of 45 microphones spanning over 5 arms it had to be cut down, the inner 20 were microphones were chosen and then 4 of the 5 on the next ring of microphones as shown in Figure \ref{fig:FinalBuild}.
     
-    \hl{add figure}
+    \begin{figure} [H]
+        \centering
+        \includegraphics[keepaspectratio, width = 0.75\textwidth]{Figures/FinalArrayBuilt.png}
+        \caption{Final Microphone Array with 24 Microphones}
+        \label{fig:FinalBuild}
+    \end{figure}
     
-    \hl{add figure of freq response comparison}
+    A comparison of the intended final array and the used final array is shown in Figure \ref{fig:FreqResponseComparison}, the designed final array has a much better response as would be expected with almost double the microphones but the final microphone array has an adequate response and is still preferred to the first design.
+    
+    \begin{figure} [H]
+        \centering
+        \begin{tabular}{cc}
+            \subfloat[Designed Final Microphone Array]{\includegraphics[keepaspectratio, width = 0.45\textwidth]{Figures/45MicFreqResponse3k.png}} &
+            \subfloat[Final Microphone Array]{\includegraphics[keepaspectratio, width = 0.45\textwidth]{Figures/24MicFreqResponse3k.png}}
+        \end{tabular}
+        \caption{Comparison of Frequency Responses at 3kHz}
+        \label{fig:FreqResponseComparison}
+    \end{figure}
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Applying to Machine Defects} \label{sec:Machine Defects}
+\section{Application to Machine Defects} \label{sec:Machine Defects}
 
 Vibration analysis is used to evaluate the condition of machinery and determine whether defects due to misalignment, bearing degradation, looseness or any other potential factors that could be present. These defects generally cause vibration or impacting within the shaft or bearing housing that can be analysed and diagnosed, diagnosis requires the measurement of the vibration, velocity or displacement of the shaft or bearing housing over a period of time so that the time waveform and the frequency spectrum can be obtained and then analysed. Instead of using an accelerometer to measure the vibration it is possible to use a microphone as these defects generate noise the same way they generate vibration, with an array of microphones this will give the ability to pinpoint certain defects of machinery.
 
@@ -935,27 +946,28 @@ Focusing on the frequency spectrum as the features and patterns present can be d
 Harmonic patterns are multiples of a specific frequency for example if there is a frequency at 25Hz it's harmonics would be 50Hz, 75Hz, 100Hz and so on. The first frequency (25Hz) is known as the fundamental frequency.
 Harmonics can be synchronous, sub-synchronous or non-synchronous. Synchronous includes the running speed frequency and all of its harmonics, sub-synchronous is below the running speed frequency and non-synchronous are all the frequencies between harmonics, all of these can indicate different types of faults. Common reasons for synchronous energy in the spectrum is imbalance, misalignment, looseness, blade/vane pass frequencies or gears, for sub-synchronous energy is commonly due to other machinery, hydraulic instability, or cage frequencies of bearings and for non-synchronous energy energy is commonly due to rolling element bearing defects, resonances, cavitations or other components and machines. \hl{hand book}
 
-Sidebands occur when there are two equally space frequencies on the higher and lower side of a frequency for example if there is a frequency a 125Hz and two more frequencies at 130Hz and 120Hz these two frequencies would be called sidebands. A single frequency with sidebands in a time waveform would look like amplitude modulation, and if there are also harmonics with sidebands present this would look like amplitude modulation with a distorted fundamental carrier wave. Common reasons for the appearance of sidebands are gear tooth wear, gear backlash, motor rotor faults or bearing ball defects. \hl{mobius inst + handbook}
+Sidebands occur when there are two equally space frequencies on the higher and lower side of a frequency for example if there is a frequency a 125Hz and two more frequencies at 130Hz and 120Hz these two frequencies would be called sidebands, specifically 10Hz sidebands. A single frequency with sidebands in a time waveform would look like amplitude modulation, and if there are also harmonics with sidebands present this would look like amplitude modulation with a distorted fundamental carrier wave. Common reasons for the appearance of sidebands are gear tooth wear, gear backlash, motor rotor faults or bearing ball defects. \hl{mobius inst + handbook}
 
 Knowing these common occurring defects of machinery that can be identified through the frequency spectrum with the addition of a microphone array beamforming with the MUSIC algorithm it is possible to determine locations of certain defects by targeting that particular set of frequencies, as well as this the sound can then be extracted from that location for further analysis. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Lab Testing} \label{sec:Lab Testing}
+\section{Testing} \label{sec:Lab Testing}
     \hl{sections for early testing, 24 mic testing etc.}
     
     \hl{comparison of algorithms for everything}
-    
-    Current testing has only involved myself whistling in-front of the array, but this has given promising results. For the last test I was standing above the microphone array whistling while it ran for one second producing the heat-map in Figure \ref{fig:RealWhistle}. This result shows the estimated source to be right at the top of the array in the centre which is fairly accurate to where I was, also present are two relatively major side-lobes towards the bottom right of the heat-map.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Early Testing of First Design} \label{sec:First Array Testing}
+    Early testing  involved myself whistling in-front of the array, but this has given promising results. For the last test I was standing above the microphone array whistling while it ran for one second producing the heat-map in Figure \ref{fig:RealWhistle}. This result showed the estimated source to be right at the top of the array in the centre which is  accurate to where I was, also present are two relatively major side-lobes towards the bottom right of the heat-map.
     
     \begin{figure} [H]
         \centering
         \includegraphics[keepaspectratio, width = 0.6\textwidth]{Figures/RealWhistle.png}
-        \caption{Result of Whistle test}
+        \caption{Result of Whistle testing}
         \label{fig:RealWhistle}
     \end{figure}
     
-    After performing a Fourier transform on the signal it was found the whistle frequency was around 1675Hz this is information as well as its spatial location was vital to test the result in simulation and 3D frequency response. Knowing the location and the frequency a 3D Frequency response was setup with those parameters producing Figure \ref{fig:RealWhistleFreq}. This resulted in a very similar looking heat-map which would indicate that the algorithm and hardware are both working on the test array. The main-lobe and side-lobes all look nearly identical between the real test and the 3D Frequency Response.
+    After performing a Fourier transform on the signal it was found the whistle frequency was 1675Hz this is information as well as its spatial location was vital to test the result in simulation and 3D frequency response for verification. Knowing the location and the frequency a 3D Frequency response was setup with those parameters producing Figure \ref{fig:RealWhistleFreq}. This resulted in a very similar looking heat-map which would indicate that the algorithm and hardware are both working on the test array. The main-lobe and side-lobes all look nearly identical between the real test and the 3D Frequency Response.
     
     \begin{figure} [H]
         \centering
@@ -973,18 +985,32 @@ Knowing these common occurring defects of machinery that can be identified throu
         \label{fig:RealWhistleSim}
     \end{figure}
     
-    Further testing is required before being completely confident with the algorithm and array.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{First Design} \label{sec:First Array Testing}
+\subsection{Final Design Testing} \label{sec:Second Array Testing}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Second Design} \label{sec:Second Array Testing}
+\subsubsection{Design Verification} \label{sec:Design Verification Testing}
+    To verify the accuracy and performance of the microphone array testing was performed in the lab using a speaker and a laser distance measurer. There were two tests performed one with the speaker at 43 Degrees Azimuth and the other with the speaker at 170 Degrees Azimuth both at the centre of Elevation, these angles were calculated with basic trigonometry using the laser distance measurer, the 43 Degree test was 4m away from the origin of the array and the 10 Degree test was 3m from origin.
+    
+    
+    \begin{figure} [H]
+        \centering
+        \begin{tabular}{cc}
+            \subfloat[47 Degree Azimuth Test]{\includegraphics[keepaspectratio, width = 0.45\textwidth]{Figures/47DegDAS_Test.png}} &
+            \subfloat[10 Degree Azimuth Test]{\includegraphics[keepaspectratio, width = 0.45\textwidth]{Figures/10DegDAS_Test.png}}
+        \end{tabular}
+        \caption{Array Verification Test}
+        \label{fig:array verification}
+    \end{figure}
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Defect Detection} \label{sec:Defect Detection Lab Testing}
+\subsubsection{Algorithm Comparison} \label{sec:Algorithm Comparison Testing}
+\hl{??}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Defect Detection} \label{sec:Defect Detection Lab Testing}
 
     Now to verify the ability of the array to differentiate different noise and spatially locate them a simple test was performed in a lab environment. To the right hand side 3m from the array a speaker was playing a loud 2.5kHz sinusoidal tone and in front of the array to the left 8m away was a turbine balance test rig running at 3000rpm, the purpose of the test was to see if it would be possible to differentiate the sources.
 
     Figure \ref{fig:mic signals lab test} shows the signals captured by the microphone array over a 4 second period. As can be seen in the frequency spectrum, there is a significant amount of noise in the sub 1kHz frequency range, a large spike at 2.5kHz, a small bunch of signals at 5kHz and 6kHz and more noise around 9-11kHz. As the lab was relatively quiet the peaks that appeared at 5kHz and 6kHz were assumed to be coming from the balancing test rig, Figure \ref{fig:zoom mic signals lab test} provides a closer look at some of the assumed signals from the balancing test rig.
-    
     
     \begin{figure} [H]
         \centering
@@ -1015,7 +1041,7 @@ Knowing these common occurring defects of machinery that can be identified throu
     This test shows promising results with the array proving that is able to differentiate particular noise sources by frequency and even when the particular frequencies of interest are only just above the noise floor. As well this test has reinforced the potential of the microphone array for finding defects in machine by using a particular set of frequencies to pin-point spatially.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Site Testing} \label{sec:Site Testng}
+\subsection{Site Testing} \label{sec:Site Testing}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Recommendations} \label{sec:Recommendations}
