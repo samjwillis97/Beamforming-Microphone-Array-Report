@@ -963,7 +963,7 @@ Knowing these common occurring defects of machinery that can be identified throu
     \hl{comparison of algorithms for everything}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Early Testing of First Design} \label{sec:First Array Testing}
-    Early testing  involved myself whistling in-front of the array, but this has given promising results. For the last test I was standing above the microphone array whistling while it ran for one second producing the heat-map in Figure \ref{fig:RealWhistle}. This result showed the estimated source to be right at the top of the array in the centre which is  accurate to where I was, also present are two relatively major side-lobes towards the bottom right of the heat-map.
+    Early testing  involved myself whistling in-front of the array, but this did give promising results. For the final testing of the first design I was standing above the microphone array whistling while acquiring one second of data, using the delay and sum algorithm on this one produced the heat-map shown in Figure \ref{fig:RealWhistle}. This result accurately estimated the source to be right at the top of the array in the centre which is accurate to where I was, also present are two relatively major side-lobes in the bottom right quadrant of the heat-map.
     
     \begin{figure} [H]
         \centering
@@ -972,7 +972,7 @@ Knowing these common occurring defects of machinery that can be identified throu
         \label{fig:RealWhistle}
     \end{figure}
     
-    After performing a Fourier transform on the signal it was found the whistle frequency was 1675Hz this is information as well as its spatial location was vital to test the result in simulation and 3D frequency response for verification. Knowing the location and the frequency a 3D Frequency response was setup with those parameters producing Figure \ref{fig:RealWhistleFreq}. This resulted in a very similar looking heat-map which would indicate that the algorithm and hardware are both working on the test array. The main-lobe and side-lobes all look nearly identical between the real test and the 3D Frequency Response.
+    After performing a Fourier transform on the signal it was found that my whistle frequency was 1675Hz this is information as well as its spatial location was required to test the result in simulation and 3D frequency response for verification. Knowing the location and the frequency a 3D Frequency response was setup with those parameters producing Figure \ref{fig:RealWhistleFreq}. As can be this produced a very similar looking heat-map which would indicate that the algorithm and hardware are both working on the test array as that would be the only way to produce such similar results. The main-lobe and side-lobes all look nearly identical between the real test and the 3D Frequency Response.
     
     \begin{figure} [H]
         \centering
@@ -989,6 +989,8 @@ Knowing these common occurring defects of machinery that can be identified throu
         \caption{Whistle test Simulation}
         \label{fig:RealWhistleSim}
     \end{figure}
+
+    This whistle test and following simulations validated the array design and that it was working with delay and sum algorithm, though due to the external electrical noise in the wiring and the small number of microphones no more testing was performed or required and moving onto the design of a larger array and improved algorithms were the next steps.
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Final Design Testing} \label{sec:Second Array Testing}
