@@ -311,12 +311,13 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Software Research and Development} \label{sec:Software}
-    The software chosen for the development environment and data acquisition is National Instruments LabVIEW due to the ease of use with currently available hardware and the great potential for expansion of sensors. LabVIEW also makes the programming of field programmable gate array relatively simple which can potentially make impressive speed improvements to the algorithm.
+
+    LabVIEW by National Instruments was the chosen environment for software development and data acquisition. This choice was made due to the integration with National Instruments' Hardware that was readily available for the purpose of this project. 
     
     LabVIEW is short for Laboratory Virtual Instrument Engineering Workbench, a programming environment in which you create programs graphically connecting function blocks with wires for data flow. LabVIEW features a graphical user-interface making it simple for simulations, presentation of ideas and general programming \citep{Tra06}. With the inbuilt digital signal processing and data acquisition libraries this makes LabVIEW incredibly useful for the purpose of developing an acoustic array.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Delay-and-Sum Algorithm} \label{sec:Software DAS}
-    To begin a full investigation into acoustic beamforming arrays a complete understanding of the delay-and-sum beamformer is required. For explanation and understanding it is easiest to think of a uniform linear array of $N$ microphones. Figure \ref{fig:ULA} demonstrates this, where $s(t)$ is the unknown source in the far-field, $\theta$ is the incoming incident angle, $d$ is the spacing between sensors, $v_n(t)$ is additive noise and interference, $x_n(t)$ is the signal at each sensor, and $y_n(t)$ the output of each of these sensors.
+    To begin a full investigation into acoustic beamforming arrays a complete understanding of the delay-and-sum beamformer is required. For explanation and ease of understanding it is best to think of a uniform linear array of $N$ microphones (sensors). Figure \ref{fig:ULA} demonstrates a uniform linear array, where $s(t)$ is an unknown sound source impinging on the array from the far-field as a planar wavefront, $\theta$ is the incoming incident angle of the unknown source, $d$ is the spacing between sensors, $v_n(t)$ is additive noise and interference from the environment, $x_n(t)$ is the signal at each sensor, and $y_n(t)$ the output of each of these sensors.
     
     \begin{figure} [H]
         \centering
@@ -325,10 +326,10 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         \label{fig:ULA}
     \end{figure}
     
-    As can be seen in the diagram, the path to each microphone has slightly different lengths, this is what causes the differing time delays and allows for beamforming. If we let $s(t)$ be the received signal at the origin then an array of signals received at each sensor at time instant $t$ is written as and $s_n(t)$ will be the signal received at sensor $n$:
+    As can be seen in the diagram, the path to each microphone has slightly differing lengths, this is what causes the differing time delays and allows for beamforming as it is the fundamental reason beamforming is possible. If we let $s(t)$ be the received signal at the origin then an array of signals received at each sensor at time instant $t$ is written as seen in Eqn \ref{eq:signal array} and $s_n(t)$ will be the signal received at sensor $n$:
     
     \begin{equation}
-        s(t) = [s(t-\tau_1), s(t-\tau_2), ..., s(t-\tau_N)]^T
+        \mathbf{s_{(t)}} = [s(t-\tau_1), s(t-\tau_2), ..., s(t-\tau_N)]^T
         \label{eq:signal array}
     \end{equation}
     \begin{equation}
@@ -336,14 +337,14 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         \label{eq:sensor signal}
     \end{equation}
     
-    In Equation \ref{eq:signal array} $\tau$ is the time delay also known as the time difference of arrival. For arrays of any geometry this delay can be quite easily calculated using trigonometry, the speed of sound, and location of the sensors. It should always be taken into account that the speed of sound in air will change with the temperature, $T$, this relationship is shown in Equation \ref{eq:speed of sound}. 
+    In Equation \ref{eq:signal array}, $\tau$, is the time delay, also known as the time difference of arrival, as it is the difference in time for the signal to reach microphone $n$ relative to a reference microphone or the centre of the array. For arrays of any geometry this delay can be quite easily calculated using trigonometry, the speed of sound, and location of the sensors. It should always be taken into account that the speed of sound in air will change with the temperature, $T$, this relationship is shown in Equation \ref{eq:speed of sound}. 
     
     \begin{equation}
         c = 331.3 \times \sqrt{1+\frac{T}{273.15}}
         \label{eq:speed of sound}
     \end{equation}
     
-    For the uniform linear array we can find the delay for each microphone using the respective $x$ location relative to the origin at the centre of the microphone array and the Equation \ref{eq:TDOA}.
+    For the uniform linear array we can find the delay for each microphone using the respective $x$ locations relative to the origin at the centre of the microphone array and the Equation \ref{eq:TDOA}.
     
     \begin{equation}
         \tau = \frac{x\cdot cos(\theta)}{c}
@@ -357,12 +358,12 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         \label{eq:TDOAx+y}
     \end{equation}
     
-    Both Equation \ref{eq:TDOA} and \ref{eq:TDOAx+y} make the assumption of, the azimuth ($\theta$) being the angle sweeping across horizontally in-front of the array ranging from $0^{\circ} \to 180^{\circ}$ where $90^{\circ}$ is at the origin and the elevation ($\phi$) sweeping from the bottom at $-90^{\circ}$ to the top at $90^{\circ}$ vertically. This is used to digitally steer the beam over a virtual area in-front of the array to determine where a signal is coming from. The point in-front of the array where the signal has the highest power is the estimate of source location.
+    Both Equation \ref{eq:TDOA} and \ref{eq:TDOAx+y} make the assumption of, the azimuth ($\theta$) being the angle sweeping across horizontally in-front of the array ranging from $0^{\circ} \to 180^{\circ}$ where $90^{\circ}$ is at the origin and the elevation ($\phi$) sweeping from the bottom at $-90^{\circ}$ to the top at $90^{\circ}$ vertically. This co-ordinate system is used to digitally steer the beam over a virtual area in-front of the array to determine where a signal is coming from by iterating through all combinations of azimuth and elevation. The point in-front of the array where the signal has the highest equivalent power is the estimation of the signal source's location. \hl{add equation for power}
     
-    Using this delay-and-sum algorithm will also allow for the extracting of signals from a particular spatial location by applying the algorithm to a single spatial point rather. For the point of interest the channels are delayed accordingly, summed and then normalised as described above to return a single waveform for the location of interest.
+    Using this delay-and-sum algorithm will also allow for the extracting of signals from a particular spatial location by applying the algorithm to a single spatial point rather. For the point of interest the channels are delayed accordingly, summed and then divided by the number of microphones to return a single waveform for the location of interest.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{LabVIEW Implementation} \label{sec:DAS Implementation}
-    For the real implementation of the delay-and-sum algorithm the delay equation needs a minor modification due to the digital sampling of signals. When a signal is sampled at $30$kHz known as the sample rate ($f_s$), each sample is approximately $0.033$ms, now we have to talk in discrete time steps of this sample length rather than time, therefore the delay formula is re-written in Equation \ref{eq:TDOAfs} to take this into account.
+    For the real implementation of the delay-and-sum algorithm the delay equation needs a minor modification due to the digital sampling of signals. For instance when a signal is sampled at $30$kHz known as the sample rate ($f_s$), the time between each sample is approximately $0.033$ms, now we have to work in discrete time steps of this sample length rather than continuous time, therefore the delay formula is re-written as shown in Equation \ref{eq:TDOAfs} to take this into account.
     
     \begin{equation}
         \tau_s = \frac{x \cdot cos(\theta) + y \cdot sin(-\phi)}{c}\cdot f_s
@@ -371,7 +372,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
     
     A problem arises using Equation \ref{eq:TDOAfs} when the calculated delay for a particular channel is not an integer, due to the digital sampling the smallest delay is the sample length as it is not possible to delay by sub-sample time steps. When using a lower sampling rate this problem can cause large inaccuracies, the easiest way to prevent this is to use the highest possible sample rate to minimise the error, otherwise, the incoming signal can be up-sampled by a preset factor using a Linear Up-sampler or Finite Impulse Response Filter, this up-sampling factor is taken into account with the delay by multiplying the original sampling rate by this same factor. 
     
-    The process in LabVIEW for applying the delay to each signal was to find the largest and the smallest delay required for that particular point, for each channel the absolute of the smallest delay at that point plus the individual channel delay worth of zeroes are added to the beginning of the signal. Following this, the absolute value of the largest delay of samples are removed from this signal to ensure there are no zeroes left in the signal to keep integrity. The block diagram for this process is shown in Figure \ref{fig:DelayLabVIEW}, the two rectangular structures are For Loops in LabVIEW, the outer iterates through a larger 2D array of delays and returns a 1D array of delays for a particular azimuth and elevation, the inner loop iterates through each channel applying the correct delay.
+    The process in LabVIEW for applying the delay to each signal was to find the largest and the smallest delay required for that particular point, then for each channel the absolute value of the smallest delay for that point plus the individual channel delay worth of zeroes are added to the beginning of the signal as padding. Following this, the absolute value of the largest delay of samples are removed from this signal to ensure there are no zeroes left in the signal to keep signal integrity. The LabVIEW code for this process is shown in Figure \ref{fig:DelayLabVIEW}, as can be seen LabVIEW code is closer to a block-diagram than traditional text-based programming, the two rectangular structures are For Loops in LabVIEW, the outer iterates through a larger 2D array of delays and returns a 1D array of delays for a particular azimuth and elevation, the inner loop iterates through each channel applying the correct delay channel by channel.
     
     \begin{figure} [H]
         \centering
@@ -380,7 +381,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         \label{fig:DelayLabVIEW}
     \end{figure}
     
-    To produce a heat-map of the effective view of the acoustic array the array is digitally steered to each point on a virtual grid in-front of the array and evaluates the equivalent power of the signal at this point. For the delay-and-sum beamformer this process involves going through each azimuth and elevation giving a grid 180 by 180 points representing the area in-front of the array and delaying and summing at each point. The signals on acquisition are converted to an array of floating point values where each index is an individual sample of amplitude, then for each point on the array the signal is to be delayed by the calculated amount using Equation \ref{eq:TDOAfs}, the equivalent power at a point ($P$) as a single number is calculated by Equation \ref{eq:power}.
+    To produce a heat-map of the estimated soundscape view of the acoustic array the array is digitally steered to each point on a virtual grid in-front of the array and evaluates the equivalent power of the signal at this point. For the delay-and-sum beamformer this process involves going through each azimuth and elevation giving a grid 180 by 180 points representing the area in-front of the array and delaying and summing at each point. The signals on acquisition are converted to an array of floating point values where each index is an individual sample of amplitude, then for each point on the array the signal is to be delayed by the calculated amount using Equation \ref{eq:TDOAfs}, the equivalent power at a point ($P$) as a single number is calculated by Equation \ref{eq:power}.
    
     \begin{equation}
         P_{(\theta, \phi)} = \sum_{t=0}^\infty\Big(\frac{\sum_{n=1}^N x_n(T)}{N}\Big)^2
