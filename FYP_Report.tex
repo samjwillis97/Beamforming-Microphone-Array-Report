@@ -83,6 +83,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
 \section*{Abstract}
 \vspace{-3mm}
     \hl{to re do}
+    % https://student.unsw.edu.au/sample-abstracts-writing
     This report entails my current work and my plans for future work in my final year project towards designing and building a working beamforming acoustic array for the purpose of condition monitoring of machinery. The use of acoustic arrays in the condition monitoring industry will be able to improve the early detection of defects and be much easier to setup and monitor.
     
     Currently I have designed an acoustic array consisting of 12 MEMS Microphones that has been tested and detects and locates a sound source successfully, these results have been verified through simulation of the expected response to the input signal and the array's expected frequency response to a signal of that frequency.
@@ -150,13 +151,12 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
 \section{Literature Review} \label{sec:Literature Review}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Acoustic Beamforming} \label{sec:Beamforming}
-    Through the digital processing of multiple signals received at microphones at known locations an estimated direction of arrival and location of a signal of interest can be found, this is the basic concept of acoustic beamforming. This process can be performed in either the time-domain or the frequency-domain by using different algorithms and processing techniques. One of the core assumptions for all algorithms is whether the audio waves are treated as far-field or near-field. The far-field assumption treats the sound waves as a planar wave-front while the near-field assumption treats sound waves as a spherical wave front. Sound waves can be assumed to be far-field when they have propagated such that Equation \ref{eq:propogate} is true \citep{McC01}, before this they are treated as near-field, this is due to point sources producing a spherical wave-front and as it propagates becoming planar \citep{Yan05}. 
+    Through the digital processing of multiple signals received at microphones at known locations an estimated direction of arrival and location of a signal of interest can be found, this is the basic concept of acoustic beamforming. This process can be performed in either the time-domain or the frequency-domain by using different algorithms and processing techniques. One of the core assumptions for all algorithms is whether the audio waves are treated as far-field or near-field. The far-field assumption treats the sound waves as a planar wave-front while the near-field assumption treats sound waves as a spherical wave front. Sound waves can be assumed to be far-field when they have propagated such that Equation \ref{eq:propogate} is true \citep{McC01}, before this they are treated as near-field, this is due to point sources producing a spherical wave-front and as it propagates becoming planar \citep{Yan05}, a general rule of thumb can also be applied here, where far-field starts approximately 2 wavelengths from the sound source \citep{Mac19}. 
     
     \begin{equation}
         r > \frac{2D^2}{\lambda}
         \label{eq:propogate}
     \end{equation}
-    \hl{add a calc somewhere in report}
     \begin{table}[H]
     \centering
         \begin{tabular}{lrl}
@@ -185,15 +185,15 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         \end{figure}
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \subsection{Digital Signal Processing} \label{sec:Signal Processing}
-    \hl{what is an analog signal}
     The processing of digital signals is the most important factor when it comes to beamforming, as an array of only two microphones have the potential to perform beamforming to a certain degree of accuracy, whilst improving the signal condition, signal processing, and choice of algorithm, the resulting accuracy can be improved.
     
-    Sampling of an analog signal is one of the core processes of digital signal processing, this is the process of discretization allowing the signal to be defined by a finite set of values. When sampling the signal it must be ensured that it is being sampled at a high enough rate to avoid aliasing, this is distortion that occurs when the reconstructed signal differs from the original due to not sampling at a high enough rate. This occurs when a signal is sampled at less than half of its the frequency, this required sampling rate is known as the Nyquist Rate. When sampled below the Nyquist Rate the audio waves are not able to be recreated accurately \citep{Ben08}. This concept is best explained with a visualisation, Figure \ref{fig:NyquistFrequency} shows one sine wave sampled at three different rates, from this we can see how if the sampling rate is equal to the frequency of the signal it esults in a constant amplitude whilst sampling at other frequencies below the Nyquist Rate will results in completely different signal with varying frequencies and amplitudes. 
+    An analog signal is defined as a continuous signal that varies over time where the varying value in electronics is often voltage, for example the output of the microphones used throughout this project is a analog signal with a varying voltage between $\pm$ 50mV. Sampling of an analog signal is one of the core processes of digital signal processing, this is the process of discretization allowing the signal to be defined by a finite set of values. When sampling the signal it must be ensured that it is being sampled at a high enough rate to avoid aliasing, this is distortion that occurs when the reconstructed signal differs from the original due to not sampling at a high enough rate. This occurs when a signal is sampled at less than half of its the frequency, this required sampling rate is known as the Nyquist Rate. When sampled below the Nyquist Rate the audio waves are not able to be recreated accurately \citep{Ben08}. This concept is best explained with a visualisation, Figure \ref{fig:NyquistFrequency} shows one sine wave sampled at three different rates, from this we can see how if the sampling rate is equal to the frequency of the signal it esults in a constant amplitude whilst sampling at other frequencies below the Nyquist Rate will results in completely different signal with varying frequencies and amplitudes. 
 
     \begin{figure}[H]
         \centering
-        \includegraphics[keepaspectratio, width = 0.8\textwidth]{Figures/NyquistFrequency.png}
+        \includegraphics[keepaspectratio, width = 0.6\textwidth]{Figures/NyquistFrequency.png}
         \caption{Nyquist Rate Visualised \citep{NINyq}}
         \label{fig:NyquistFrequency}
     \end{figure}
@@ -358,7 +358,7 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
         \label{eq:TDOAx+y}
     \end{equation}
     
-    Both Equation \ref{eq:TDOA} and \ref{eq:TDOAx+y} make the assumption of, the azimuth ($\theta$) being the angle sweeping across horizontally in-front of the array ranging from $0^{\circ} \to 180^{\circ}$ where $90^{\circ}$ is at the origin and the elevation ($\phi$) sweeping from the bottom at $-90^{\circ}$ to the top at $90^{\circ}$ vertically. This co-ordinate system is used to digitally steer the beam over a virtual area in-front of the array to determine where a signal is coming from by iterating through all combinations of azimuth and elevation. The point in-front of the array where the signal has the highest equivalent power is the estimation of the signal source's location. \hl{add equation for power}
+    Both Equation \ref{eq:TDOA} and \ref{eq:TDOAx+y} make the assumption of, the azimuth ($\theta$) being the angle sweeping across horizontally in-front of the array ranging from $0^{\circ} \to 180^{\circ}$ where $90^{\circ}$ is at the origin and the elevation ($\phi$) sweeping from the bottom at $-90^{\circ}$ to the top at $90^{\circ}$ vertically. This co-ordinate system is used to digitally steer the beam over a virtual area in-front of the array to determine where a signal is coming from by iterating through all combinations of azimuth and elevation. The point in-front of the array where the signal has the highest equivalent power is the estimation of the signal source's location.
     
     Using this delay-and-sum algorithm will also allow for the extracting of signals from a particular spatial location by applying the algorithm to a single spatial point rather. For the point of interest the channels are delayed accordingly, summed and then divided by the number of microphones to return a single waveform for the location of interest.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -530,8 +530,6 @@ E-mail: \href{mailto:s.willis@uon.edu.au}{\textsf{s.willis@uon.edu.au}}}
     For each frequency bin the full narrowband compute as described above is calculated and the resulting power for each frequency at each point is averaged to calculate the estimated direction of arrival of the $M$ wideband signals. Another implementation of the MUSIC algorithm is using a select number of pre-determined frequencies to perform the average over for rather than a range, this is particularly useful when locating machine defects as covered in greater detail in Section \ref{sec:Machine Defects}, as well as being a more accurate way to locate defects it is much more computationally efficient than calculating the power array for all of the frequency bins in a range.
     
     Identical to the 2D array of power returned by the delay-and-sum the MUSIC algorithm returns a value for each spatial location using equation \ref{eq:MUSIC Power} which is normalised between -1 and 1, again with 1 being the most likely location of the signal of interest to allow direct comparison to the delay-and-sum algorithm and easy interpretation of results. The one downside of MUSIC compared to the delay-and-sum algorithm the MUSIC algorithm does not actually resolve a resultant signal at each location and therefore cannot be used to extract signal without the help of delay-and-sum. 
-    
-    \hl{add a section on fft windows and the effects it can have on the results of the MUSIC algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simulation Package} \label{sec:Software Sim}
     % This simulation program is verified to be accurate by comparison of the 3D frequency response heat-map produced in Section \ref{sec:2D Freq Response} and results found from testing.
@@ -685,7 +683,7 @@ Figure \ref{fig:FilePlaybackPanel} shows the user interface for playing back fil
         \label{fig:2DResponseSteered}
     \end{figure}
     
-    When evaluating a 2D Frequency response the main points of interest are the main-lobe, its beam-width and the side lobes. The main-lobe is the lobe with the greatest amplitude seen at 90$^{\circ}$ in Figure \ref{fig:2DFreqResponseLin} the beam-width is the width from where the main-lobe drops to -20dB as this is half the power of 0dB, this is effectively the resolution of the array at that frequency. Side lobes are important to show the effective gain of interference that appear to be coming from angles other than the angle of interest due to spatial aliasing, these can be seen in Figure \ref{fig:2DFreqResponseLin} and \ref{fig:2DResponseSteered} by the 7 or 8 lobes with peaks around -20dB gain. The goal of microphone array geometry design is to minimise the side lobes minimizing interference, and decreasing the beam width to give a better array resolution.
+    When evaluating a 2D Frequency response the main points of interest are the main-lobe, its beam-width and the side-lobes. The main-lobe is the lobe with the greatest amplitude seen at 90$^{\circ}$ in Figure \ref{fig:2DFreqResponseLin} the beam-width is the width from where the main-lobe drops to -20dB as this is half the power of 0dB, this is effectively the resolution of the array at that frequency. side-lobes are important to show the effective gain of interference that appear to be coming from angles other than the angle of interest due to spatial aliasing, these can be seen in Figure \ref{fig:2DFreqResponseLin} and \ref{fig:2DResponseSteered} by the 7 or 8 lobes with peaks around -20dB gain. The goal of microphone array geometry design is to minimise the side-lobes minimizing interference, and decreasing the beam width to give a better array resolution.
     
     Equation \ref{eq:2D Response} was adapted from \citet{Ben08} and has been applied to calculate 2D Frequency responses in Figures \ref{fig:2DFreqResponseLin} and \ref{fig:2DResponseSteered}.
     
@@ -747,7 +745,7 @@ Figure \ref{fig:FilePlaybackPanel} shows the user interface for playing back fil
 
     The main constraints with the design of microphone array is the number of handle-able synchronised high sample-rate analog inputs.
     
-    A comparison of various array geometries was performed by Zebb Prime and Con Doolan of The University of Adelaide, this included various spiral array geometries that were evaluated by comparing their minimum side lobe levels and beam widths. A comparison of all the arrays for both near-field and far-field was presented but as the purpose of the array in this report is for far-field signals the near field results were not taken into account. The comparison showed the the Underbrink geometry design was overall the best performing closely followed by the Brüel \& Kjær (B\&K) array \citep{Pri13}. Hence for the choice of array for the proof of concept design the Underbrink array was chosen as it shows promising resolution and minimal side lobes especially for the number of sensors being used.
+    A comparison of various array geometries was performed by Zebb Prime and Con Doolan of The University of Adelaide, this included various spiral array geometries that were evaluated by comparing their minimum side-lobe levels and beam widths. A comparison of all the arrays for both near-field and far-field was presented but as the purpose of the array in this report is for far-field signals the near field results were not taken into account. The comparison showed the the Underbrink geometry design was overall the best performing closely followed by the Brüel \& Kjær (B\&K) array \citep{Pri13}. Hence for the choice of array for the proof of concept design the Underbrink array was chosen as it shows promising resolution and minimal side-lobes especially for the number of sensors being used.
     
     The Underbrink array is shown in Figure \ref{fig:Mic Arrays}, it is a "multi-spiral design where the microphones are placed in the centre of equal area segments" \citep{Pri13}. Where a minimum and maximum radius ($r_0$ and $r_{max}$ respectively) must be defined as well as the number of spiral arms ($N_a$) and microphones per spiral ($N_m$). This array is based upon the following set of equations.
     
@@ -769,7 +767,7 @@ Figure \ref{fig:FilePlaybackPanel} shows the user interface for playing back fil
     To be able to generate many different configurations of the Underbrink array a Python script was initially written, this script also converted the coordinates from polar to Cartesian making it easier to work with the LabVIEW Simulations. As progression was made with LabVIEW this was converted to a LabVIEW module for better integration to the full simulation package. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{First Design} \label{sec:First Array Design}
-    For the initial testing of microphone arrays and verification that it would be possible the available hardware I designed an underbrink array with an inner radius of 25mm and outer radius of 250mm, 3 arms with 4 microphones each. The reason for 12 microphones was due to a hardware limit as there were only 12 available high speed analog input cards for data acquisition at the time. Through the inital design process it was found that the underbrink array performed better when there was an odd number of arms as it prevent the array from being symmetrical and significantly reduced the side lobe levels and spatial aliasing as is further investigated in Section \ref{sec:Second Array Design}, a scatter plot of the designed array is pictured in \ref{fig:Testing Array}.
+    For the initial testing of microphone arrays and verification that it would be possible the available hardware I designed an Underbrink array with an inner radius of 25mm and outer radius of 250mm, 3 arms with 4 microphones each. The reason for 12 microphones was due to a hardware limit as there were only 12 available high speed analog input cards for data acquisition at the time. Through the initial design process it was found that the Underbrink array performed better when there was an odd number of arms as it prevent the array from being symmetrical and significantly reduced the side-lobe levels and spatial aliasing as is further investigated in Section \ref{sec:Second Array Design}, a scatter plot of the designed array is pictured in \ref{fig:Testing Array}.
     
     \begin{figure} [H]
         \centering
@@ -791,7 +789,9 @@ Figure \ref{fig:FilePlaybackPanel} shows the user interface for playing back fil
         \caption{Underbrink Array 3D Responses}
         \label{fig:Underbrink Response}
     \end{figure}
-        
+    
+    Below Figure \ref{fig:TestArray} shows the array that was used in this first design, this was constructed from a sheet of cardboard as this allowed for easy prototyping of an array of this size, holes were cut at the exact location of the microphones which allowed for easy mounting with a screw and an additional hole made for the cables to be run through. The main problem with a design like this is the potential for reverberation noise from the solid back-plane of the array.
+    
     \begin{figure} [H]
         \centering
         \includegraphics[keepaspectratio, width = 0.6\textwidth]{Figures/CardboardArray.jpeg}
@@ -803,11 +803,13 @@ Figure \ref{fig:FilePlaybackPanel} shows the user interface for playing back fil
 \subsubsection{Second Design} \label{sec:Second Array Design}
     For the second iteration of the microphone array my limit was increased to 48 synchronous analog channels. This was to be achieved using two separate National Instrument cRIO-9036's both filled with 8 NI-9232's capable of 3 analog channels sampling at 102.4kHz.
     
-    Through an investigation of Underbrink array designs found that an odd number of arms performs better than an even number when using a similar number of microphones. This is found to be due to the symmetrical geometry produced by an even number of arms that causes the problem of spatial aliasing. A series of microphone array geometries used to demonstrate this is displayed in Appendix \hl{fill}, these geometries range from 42 to 48 microphones being used from 5 to 9 arms and all with a minimum radius of 25mm and maximum radius of 0.5m as this gave the best possible frequency response without the array becoming too large to easily move, carry and transport. The theoretical frequency response of an array of this size will be from 686Hz to beyond the 10kHz limit of the microphones.
+    The Figures for this section can be found in Appendix \ref{app:Geom Invest}.
     
-    Figure \ref{fig:Geometry Results} displays the 3D Frequency Response of each of the arrays from Figure \ref{fig:Testing Geometries} when subject to a pure 4kHz signal at the absolute centre of the array. This demonstrates that purely having more microphones will not always result in a better performing array and that other factors will see better improvements in performance. All of the geometries have a near identical beam-width, this was expected as the 4kHz is well within all of their frequency response, and with all of the arrays having equal inner and outer radius' no array should have an advantage. Both microphone arrays utilising the full 48 microphones show significantly larger side lobe levels than the arrays with less microphones due to the even number of arms on the array.
+    Through an investigation of Underbrink array designs found that an odd number of arms performs better than an even number when using a similar number of microphones. This is found to be due to the symmetrical geometry produced by an even number of arms that causes the problem of spatial aliasing. The series of microphone array geometries used to demonstrate this is displayed in Appendix \ref{app:Geometries}, these geometries range from 42 to 48 microphones being used from 5 to 9 arms and all with a minimum radius of 25mm and maximum radius of 0.5m as this gave the best possible frequency response without the array becoming too large to easily move, carry and transport. The theoretical frequency response of an array of this size will be from 686Hz to beyond the 10kHz limit of the microphones.
     
-    Taking into consideration the results of the various array geometries the geometry shown in Figure \ref{fig:Testing Geometries}.a with 5 arms was chosen for the new array design, this was due to two reason; firstly the array showed similar side lobe levels to the 7 arm and 9 arm geometries but had fewer side lobes, secondly with a desired inner radius of 25mm it would not be possible to fit more than 5 microphones nicely.
+    Appendix \ref{app:frequencies} features the 3D Frequency Response of each of the arrays from Appendix \ref{app:Geometries} when subject to a pure 4kHz signal at the absolute centre of the array. This demonstrates that purely having a great number of microphones will not result in a better performing array and that other choices made with the geometry will see better improvements in performance. All of the geometries have a near identical beam-width, this was expected as the used 4kHz signal is well within all of their ideal frequency response range, and with all of the arrays having equal inner and outer radius' no array should have an advantage. Both microphone arrays utilising the full 48 microphones show significantly larger side-lobe levels than the arrays with less microphones due to the even number of arms on the array.
+    
+    Taking into consideration the results of the various array geometries the geometry shown in Appendix \ref{app:Geometries}(a) with 5 arms was chosen for the new array design, this was due to two reason; firstly the array showed similar side-lobe levels to the 7 arm and 9 arm geometries but had fewer side-lobes, secondly with a desired inner radius of 25mm it would not be possible to fit more than 5 microphones easily. This design can also be seen in the finished design shown in Figure \ref{fig:Final Array}.
         
     Now with the desired design chosen further analysis was performed to ensure adequate performance from the array. Using the same technique shown in Section \ref{sec:2D Freq Response} producing a series of 2D Frequency responses through all the use-able frequencies to see a more accurate representation of the array response.  This was performed for both the 2D response of the Azimuth and Elevation as a 3D frequency response is just a combination of these, performing them separately provides similar results but the ability to see the response over the desired frequencies. Figure \ref{fig:Final Az Beam Pattern} shows the frequency response across the azimuth of the array ranging from 0 to 10kHz and Figure \ref{fig:Final El Beam Pattern} showing the same frequency range across the elevation of the array.
         
@@ -1097,36 +1099,50 @@ Knowing these common occurring defects of machinery that can be identified throu
 
     \begin{figure} [H]
         \centering
-        \includegraphics[keepaspectratio, width = \textwidth]{Figures/U5_LPB.png}
+        \includegraphics[keepaspectratio, width = 0.95\textwidth]{Figures/U5_LPB.png}
         \caption{Spectrum and Time Waveform Centre of LPB Problem Unit}
         \label{fig:U5 Signal}
     \end{figure}
 
     \begin{figure} [H]
         \centering
-        \includegraphics[keepaspectratio, width = \textwidth]{Figures/U6_LPB.png}
+        \includegraphics[keepaspectratio, width = 0.95\textwidth]{Figures/U6_LPB.png}
         \caption{Spectrum and Time Waveform Centre of LPB Good Unit}
         \label{fig:U6 Signal}
     \end{figure}
 
-    Unfortunately testing did not go as well as I would have hoped, beamforming the array was unable to locate any sound sources with delay and sum or even any individual or sets of frequencies using MUSIC.
+    Unfortunately testing did not go as well as I would have hoped, beamforming with the array was unable to locate any sound sources with delay and sum or even any individual or sets of frequencies using MUSIC. Figure \ref{fig:TurbineSinglePeriod} shows a comparison of the two turbines waveforms over a single period. 
 
     \begin{figure} [H]
         \centering
         \begin{tabular}{c}
-            \subfloat[Problem Unit Bearing 8 Single Period of Time Waveform]{\includegraphics[keepaspectratio, width = \textwidth]{Figures/U5Bearing89_Period.png}} \\
-            \subfloat[Good Unit Bearing 8 Single Period of Time Waveform]{\includegraphics[keepaspectratio, width = \textwidth]{Figures/U6Bearing89_Period.png}}
+            \subfloat[Problem Unit Bearing 8]{\includegraphics[keepaspectratio, width = 0.95\textwidth]{Figures/U5Bearing89_Period.png}} \\
+            \subfloat[Good Unit Bearing 8]{\includegraphics[keepaspectratio, width = 0.95\textwidth]{Figures/U6Bearing89_Period.png}}
         \end{tabular}
         \caption{Turbine Single Period Comparison}
-        \label{fig:defect detection lab test results}
+        \label{fig:TurbineSinglePeriod}
     \end{figure}
     
-
-    \hl{first compare sounds to work out differences}
-    \hl{compared to previous tests signals were very significantly louder}
+    Both of the time waveforms shown in Figure \ref{fig:TurbineSinglePeriod} are very similar but there is one notable problem with both of these in regards to beamforming, there is absolutely no time difference of arrival between microphones, which is the basis that allows all beamforming to take place. This problem causes the array to estimate the sound source as originating from the exact center of the array. Figure \ref{fig:Beamforming Results U5 LPB} displays the results for beamforming with both the delay-and-sum and MUSIC algorithm at the center of the problem turbine's LPB cylinder. 
+    
+    \begin{figure} [H]
+        \centering
+        \begin{tabular}{cc}
+             \subfloat[DAS Algorithm]{\includegraphics[keepaspectratio, width = 0.4\textwidth]{Figures/U5Cyl_DAS.png}}&
+             \subfloat[MUSIC Algorithm 2kHz - 3kHz]{\includegraphics[keepaspectratio, width = 0.4\textwidth]{Figures/U5Cyl_MUSIC.png}}
+        \end{tabular}
+        \caption{Beamforming Results LPB Cylinder Problem Unit}
+        \label{fig:Beamforming Results U5 LPB}
+    \end{figure}
+    
+    As expected the results in Figure \ref{fig:Beamforming Results U5 LPB} from beamforming with both algorithms returned similar results with estimated sound source being in the dead center of the array. This result was constant with all locations tested from both turbines, no matter the frequencies searched for using MUSIC, the estimated sound source was always in the dead center of the array.
+    
+    Looking at the signals in Figure \ref{fig:U5 Signal} and \ref{fig:U6 Signal} it would be assumed that the signals are indeed coming from directly in the centre of the array as all the signals are arriving at the same time, though due to the many different locations and the signal being the same at all locations that the sound isn't coming from a point directly in the centre of the array, there are two main thoughts as to the reasons this is happening. The first theory is that the cylinder itself and the bearing casings are acting as one large loudspeaker, this would be amplifying the noise over the whole turbine, this would fit the signal being synchronised on all microphones. The second theory is that due to the environment of the power station that the reverberation off of the surrounding structure and plant is causing it to seem like the signal is coming from all directions at once and hence the microphone signals all being synchronised.
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Conclusion and Recommendations} \label{sec:Conclusion}
+    \hl{restatement of aims; achievement of aims; summary of relevance of research; restatement of results and brief evaluation}
     \hl{more industrial testing, fpga, more microphones etc would be better}
     The main goal of this project is to design an acoustic array that is to be used for the early detection of defects in machinery. This goal is looking promising and achievable, with the current delay-and-sum algorithm implemented already, by just increasing the number of sensors and improving the geometry of the array there will be noticeable improvements to the beamforming accuracy and resolution and with some fine-tuning it should be use-able on machinery. This combined with an FPGA or new algorithms will decrease computational load and potentially lead to better results as new algorithms will lead to further refinement.  
     
@@ -1163,7 +1179,7 @@ Knowing these common occurring defects of machinery that can be identified throu
     \end{figure}
 
 \section{Geometry Investigation} \label{app:Geom Invest}
-% \subsection{Geometries} \label{app:Geometries}
+\subsection{Geometries} \label{app:Geometries}
     \begin{figure} [H]
     \centering
     \begin{tabular}{cc}
@@ -1176,7 +1192,7 @@ Knowing these common occurring defects of machinery that can be identified throu
     \caption{Series of tested microphone array geometries}
     \label{fig:Testing Geometries}
     \end{figure}
-% \subsection{Frequency Responses}\label{app:frequencies}
+\subsection{Frequency Responses}\label{app:frequencies}
     \begin{figure} [H]
     \centering
     \begin{tabular}{cc}

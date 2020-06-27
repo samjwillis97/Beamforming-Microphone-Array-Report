@@ -21,14 +21,14 @@
 \pagestyle{fancy}
 %% Ordinary pages
 \fancyhf{}
-\fancyhead[CE]{School of Engineering, Discipline of Mechanical Engineering and Mechatronics}
+\fancyhead[CE]{School of Engineering, Discipline of Mechanical Engineering}
 \fancyhead[CO]{\usebox{\shorttitlebox}}
 \fancyfoot[LE]{\thepage}
 \fancyfoot[RO]{\thepage}
 %% First page
 \fancypagestyle{plain}{
 \fancyhf{}
-\fancyhead[L]{School of Engineering,~\\Discipline of Mechanical Engineering and Mechatronics,  pp. \@firstpage--\pageref{LastPage}}
+\fancyhead[L]{School of Engineering,~\\Discipline of Mechanical Engineering,  pp. \@firstpage--\pageref{LastPage}}
 \fancyhead[R]{\setlength{\unitlength}{1cm}
   \begin{picture}(0,0)
     \put(-1.8,-1.5){\usebox{\MIClogo}}
